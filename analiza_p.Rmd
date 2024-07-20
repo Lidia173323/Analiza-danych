@@ -1,0 +1,211 @@
+---
+title: "Analiza danych"
+author:
+  name: Lidia 
+  affiliation: Politechnika Krakowska
+subtitle: Projekt
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+  word_document: default
+---
+```{R}
+library(tidyverse)
+library(dplyr)
+library(tibble)
+```
+
+
+Wczytajmy plik danych *iris*, a następnie wyświetlmy jego zawartość. 
+
+```{R}
+flowers <- as_tibble(iris)
+flowers
+```
+W podanej powyżej tabeli danych przedstawione są wartośći długości i szerokości działek kielicha wraz z długością oraz szerokością płatkóW dla odpowiednich gatunków roślin $\textit{setosa, versicolor, virginica}$.
+
+Aby ułatwić przegląd danych względem podzielmy następująco tabelkę względem gatunków.
+
+```{r}
+colnames(flowers) <- c("Działki_Kielicha_Długość", "Działki_Kielicha_Szerokość","Długość_Płatka", "Szerokość_Płatka","Gatunek")
+```
+
+```{r}
+data_split <- split(flowers,flowers$Gatunek)
+```
+
+```{r}
+setosa <- filter(flowers, Gatunek == "setosa")
+setosa
+```
+
+```{r}
+versicolor<- filter(flowers, Gatunek == "versicolor")
+versicolor
+```
+```{r}
+virginica <- filter(flowers, Gatunek == "virginica")
+virginica
+```
+
+Za pomocą wykresu pudełkowego tzn. boxplota zwizualizujmy następujące dane dla odpowiednich gatunków kwiatów.
+
+```{r}
+ggplot(data=flowers, aes(x=Gatunek, y= Działki_Kielicha_Szerokość,fill = Gatunek)) + geom_boxplot()+ scale_fill_manual(values=c("#FFC0CB", "#FF69B4", "#C71585")) + ggtitle("Szerokość działki kielicha dla podanych gatunków") +
+  theme(plot.title = element_text(hjust = 0.5)) + xlab("Gatunek") + ylab("Szerokość (cm)")
+```
+
+Powyższy wykres pudełkowy dostarcza nam informacje na temat mediany, najmniejszej oraz największej wartości szerokości działek kielicha dla odpowiednich gatunków. Mediana szerokości działek klielicha dla gatunków wyznacza pozioma czarna kreska zawarta w pudełkach.
+
+###### Mediana szerokości działekkielicha
+
+$\textit{setosa}$ przyjmuję wartość po między 3.25-3.5cm, 
+$\textit{versicolor}$ w przedziałach 2.25-3cm,
+$\textit{virginica}$ wynosi ona dokładnie 3cm.
+
+Najmniejsze oraz największe wartości danych zawarte są na końcach tzn.$\textit{wąsów}$ wykresu pudełkowego.
+
+```{r}
+ggplot(data=flowers, aes(x=Gatunek, y= Działki_Kielicha_Długość,fill = Gatunek)) + geom_boxplot()+ scale_fill_manual(values=c("#B0E0E6", "#1E90FF", "#7B68EE")) + ggtitle("Długość działki kielicha dla podanych gatunków") +
+  theme(plot.title = element_text(hjust = 0.5)) + xlab("Gatunek") + ylab("Długość (cm)")
+```
+
+### Mediana długości dzialek kielicha
+$\textit{setosa}$ przyjmuję wartość 5cm, 
+$\textit{versicolor}$ w przedziałach 5.5 - 6cm,
+$\textit{virginica}$ wynosi ona dokładnie 6,5cm.
+
+```{r}
+ggplot(data=flowers, aes(x=Gatunek, y= Długość_Płatka,fill = Gatunek)) + geom_boxplot()+ scale_fill_manual(values=c("#FFFF00", "#FFA500", "#FF6347")) + ggtitle("Długość płatka dla podanych gatunków") +
+  theme(plot.title = element_text(hjust = 0.5)) + xlab("Gatunek") + ylab("Długość płatka (cm)")
+```
+
+###### Mediana długości płatka
+
+$\textit{setosa}$ przyjmuję wartość między $1-2$cm, 
+$\textit{versicolor}$ w przedziałach $4 - 5$cm,
+$\textit{virginica}$ wynosi ona $5-6$cm.
+
+```{r}
+ggplot(data=flowers, aes(x=Gatunek, y=Szerokość_Płatka,fill = Gatunek)) + geom_boxplot()+ scale_fill_manual(values=c("#ADFF2F", "#90EE90", "#32CD32")) + ggtitle("Szerokość Płatka dla podanych gatunków") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Gatunek") + ylab("Szerokość płatka (cm)")
+```
+
+###### Mediana szerokośći płatka
+
+$\textit{setosa}$ przyjmuję wartość 0,25cm, 
+$\textit{versicolor}$ w przedziałach 1,25 - 1,5cm,
+$\textit{virginica}$ wynosi ona 2cm.
+
+Na poniższych wykresach kropkowych porównajmy następujące zalezności między cechami gatunków.
+
+```{r}
+ggplot(data=flowers, aes(x=Działki_Kielicha_Długość, y=Długość_Płatka, color=Gatunek))  + geom_point()+ggtitle("Porównanie długości działki kielicha do długośći płatka") +
+  theme(plot.title = element_text(hjust = 0.5)) + ylab('Długość Płatka') + xlab('Długość działki kielicha')
+```
+
+```{r}
+ggplot(data=flowers, aes(x=Działki_Kielicha_Szerokość, y=Szerokość_Płatka, color=Gatunek)) + geom_point() + ggtitle("Porównanie szerokości działki kielicha do szerokości płatka") +
+  theme(plot.title = element_text(hjust = 0.5))+ylab('Szerokość Płatka') + xlab('Szerokość Działki Kielicha')
+```
+
+
+```{r}
+ggplot(data=flowers, aes(x=Działki_Kielicha_Szerokość, y=Długość_Płatka, color=Gatunek)) + geom_point() + ggtitle("Porównanie szerokości działki kielicha do długości płatka") +
+  theme(plot.title = element_text(hjust = 0.5))+ylab('Długość Płatka') + xlab('Szerokość Działki Kilicha')
+```
+
+Wykorzystując histogram zaczerpmy informacje na temat długości, szerokości działek kielicha oraz płatków dla gatunków.
+
+```{r}
+ggplot(data = flowers , aes(x=Działki_Kielicha_Długość,fill=Gatunek)) + geom_histogram(bins = 17,binwidth = 0.48,color='black') + facet_wrap(~Gatunek)+scale_fill_manual(values=c("#B0E0E6", "#1E90FF", "#7B68EE")) + ggtitle("Długość działki kielicha dla podanych gatunków") +
+  theme(plot.title = element_text(hjust = 0.5)) + xlab("Gatunki roślin") + ylab("Ilość")
+```
+
+Patrząc na histogram dla pierwszego gatunku zauważmy, że długość działek kielicha dla wartości między 4,5-5cm przyjmuję największa liczba populaci. Dla drugiego gatunku jest to przedział 5.5-6cm, a dla ostatniego mieści się ona między 6-6,5cm. Najniejsze wartości dla długości działek kielicha przyjmuję $\textit{setosa}$ za to największe $\textit{virginica}$.
+
+```{r}
+ggplot(data = flowers , aes(x=Działki_Kielicha_Szerokość,fill=Gatunek)) + geom_histogram(bins = 17,binwidth = 0.3,color='black') + facet_wrap(~Gatunek)+ scale_fill_manual(values=c("#FFC0CB", "#FF69B4", "#C71585")) + ggtitle("Szerokość działki kielicha dla podanych gatunków") +
+  theme(plot.title = element_text(hjust = 0.5)) + xlab("Gatunek roślin") + ylab("Ilość")
+
+```
+
+Szerokość działek kielicha dla $\textit{setosa}$przyjmująca wartość między 3-3,5cm przyjmuję największa liczba populaci. Dla drugiego gatunku jest to przedział mniej więcej 2.8-3,1cm, a dla ostatniego mieści się w podobnych przedziałach jak dla $\textit{versicolor}$. Największe wartości dla szerokości działek kielicha przyjmuję $\textit{setosa}$ za to najmniejsze $\textit{versicolor}$.
+
+```{r}
+ggplot(data = flowers , aes(x=Długość_Płatka,fill=Gatunek)) + geom_histogram(bins = 17,binwidth = 0.78,color='black') + facet_wrap(~Gatunek)+
+  scale_fill_manual(values=c("#FFFF00", "#FFA500", "#FF6347")) + ggtitle("Długość płatka dla podanych gatunków") +
+  theme(plot.title = element_text(hjust = 0.5)) + xlab("Gatunek roślin") + ylab("Ilość")
+```
+
+Długość płatka dla $\textit{setosa}$ wynosząca między 1,5-2cm przyjmuję największa liczba populaci. Dla $\textit{versicolor}$ jest to przedział mniej więcej 4,2-5.1cm, a dla ostatniego gatunku mieści się w przedziałach około 5-6cm. Największe wartości dla długości płatka przyjmuję $\textit{virginica}$ za to najmniejsze $\textit{setosa}$.
+
+```{r}
+ggplot(data = flowers , aes(x=Szerokość_Płatka,fill=Gatunek)) + geom_histogram(bins = 15,binwidth = 0.35,color='black') +scale_fill_manual(values=c("#ADFF2F", "#90EE90", "#32CD32")) + ggtitle("Szerokość Płatka dla podanych gatunków") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Gatunek roślin") + ylab("Ilość")+ facet_wrap(~Gatunek)
+```
+
+Histogram przedstawiający szerokość płatka dla $\textit{setosa}$ wynosząca między 0,25-0,52cm przyjmuję największa liczba populaci, idąc dalej dla $\textit{versicolor}$ jest to przedział mniej więcej 1,25-1,51, a dla ostatniego gatunku mieści się w przedziałach około 1,51-1,58cm. Największe wartości dla szerokości płatka przyjmuję $\textit{virginica}$ za to najmniejsze $\textit{setosa}$.
+
+# Test Parametryczny
+
+Sprawdźmy szerokość działek kielicha ma wpływ na długość płatka dla pojedynczych gatunków.
+Sprawdźmy istotność statystyczną współczynnika korelacji na poziomie istotności $\alpha=0.05$ za pomocą metody parametrycznej. 
+
+Aby zweryfikować takie stwierdzenie wykonajmy test korelacji. W związku z tym przyjmijmy następującą hipotezę zerową ${H_0}:\delta=0$ - szerokość działek kielicha nie ma wpływ na długość płatka, i alternatywną ${H_1}:\delta\neq0$ - szerokość działek kielicha ma wpływ na długość płatka.
+
+```{r}
+cor.test(setosa$Działki_Kielicha_Szerokość,setosa$Długość_Płatka)
+```
+Jako że wartość $p = 0,217$, czyli jest wyższa od przyjętego poziomu istotności wynoszącego $\alpha =0.05$, to w tym wypadku nie możemy odrzucić hipotezy zerowej mówiązej nam, że szerokość działek kielicha dla ${\textit{setosa}}$ nie ma wpływu na długość płatka. Dodatkowo na podstawie współczynika korelacji możemy stwierdzić, że istnieje słaba zależność między rozważanymi zmiennymi.
+
+```{r}
+cor.test(virginica$Działki_Kielicha_Szerokość,virginica$Długość_Płatka)
+```
+Wartość $p = 0,003898$, czyli jest niższa od przyjętego poziomu istotności $\alpha =0.05$, to odrzucamy hipotezę zerową. W tym wypadku możemy założyć, że szerokość działek kielicha dla ${\textit{virginica}}$ ma wpływu na długość płatka. Dodatkowo na podstawie współczynika korelacji możemy stwierdzić, że istnieje dość przeciętna zależność między rozważanymi zmiennymi.
+
+
+```{r}
+cor.test(versicolor$Działki_Kielicha_Szerokość,versicolor$Długość_Płatka)
+```
+Wartość $p = 2,302\cdot10^{-5}$, czyli jest niższa od przyjętego poziomu istotności $\alpha =0.05$, to w tym wypadku odrzucamy hipotezę zerową. Możemy więc przyjąc hipotezę alternatywną i założyć,że szerokość działek kielicha dla ${\textit{versicolor}}$ ma wpływu na długość płatka. Dodatkowo na podstawie współczynika korelacji możemy stwierdzić, że istnieje wysoka zależność między rozważanymi zmiennymi. Inaczej mówiąc im bardziej szersza działka kielicha tym dłuższy jest płatek.
+
+Podsumowując największa zależność między szerokością działki kielicha, a długością płatka wystepuję dla ${\textit{\versicolor}}$, za to najsłabsza dla ${\textit{setosa}}$.
+
+# Test Permutacyjny
+
+```{r}
+n <-50000
+corelation<-rep(0,n)
+for (i in 1:n) {
+  sample_1<-sample(versicolor$Szerokość_Płatka,50,replace = FALSE)
+  corelation[i] <- cor(versicolor$Długość_Płatka,sample_1)
+}
+quantile(corelation,c(0.025,0.975))
+
+```
+Przedział ufności wyznaczony testem permutacyjnym pozwala nam na odrzucenie hipotezy zerowej, ponieważ współćzynnik korelacji r-Persona wynoszący $0,5605221$ nie mieści się w podanym przedziale ufności. Czyli inaczej mówiąć przyjmujemy hipotezę alternatywną mówiącą nam, że szerokość działek kielicha dla $\textit{versicolor}$ ma wpływu na długość płatka. 
+
+```{r}
+n <-50000
+corelation<-rep(0,n)
+for (i in 1:n) {
+  sample_2<-sample(setosa$Szerokość_Płatka,50,replace = FALSE)
+  corelation[i] <- cor(setosa$Długość_Płatka,sample_2)
+}
+quantile(corelation,c(0.025,0.975))
+
+```
+
+Przedział ufności wyznaczony testem permutacyjnym nie pozwala nam na odrzucenie hipotezy zerowej, ponieważ współćzynnik korelacji r-Persona wynoszący $0,1777$ mieści się w podanym przedziale ufności. Czyli inaczej mówiąć przyjmujemy hipotezy, że szerokość działek kielicha dla $\textit{setosa}$ nie ma wpływu na długość płatka. 
+
+```{r}
+n <-50000
+corelation<-rep(0,n)
+for (i in 1:n) {
+  sample_3<-sample(virginica$Szerokość_Płatka,50,replace = FALSE)
+  corelation[i] <- cor(virginica$Długość_Płatka,sample_3)
+}
+quantile(corelation,c(0.025,0.975))
+```
+Przedział ufności wyznaczony testem permutacyjnym pozwala nam na odrzucenie hipotezy zerowej, ponieważ współćzynnik korelacji r-Persona wynoszący $0,4010446$ nie mieści się w podanym przedziale ufności. Czyli inaczej mówiąć przyjmujemy hipotezę alternatywną która mówi nam, że szerokość działek kielicha dla $\textit{virginica}$ ma wpływu na długość płatka.
+
